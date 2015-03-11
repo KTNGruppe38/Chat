@@ -26,6 +26,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             if received_string:
                 data = json.loads(received_string)
                 print data
+                self.connection.send(json.dumps(data))
 
             #data = json.loads(received_string)
 

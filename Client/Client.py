@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import socket
 import json
+from MessageReceiver import MessageReceiver
 
 class Client:
     """
@@ -17,6 +18,7 @@ class Client:
 
         # Set up the socket connection to the server
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.MessageReceiver.MessageReceiver(self,self.connection)
         
         self.host = host
         self.server_port = server_port
@@ -29,53 +31,56 @@ class Client:
 
     def run(self):
         # Initiate the connection to the server
-        
-        data = raw_input('Skriv kommando: ')
-
-        if data == 'msg':
-
-            data2 = raw_input('Skriv inn melding: ')
-
-            data3 = {'request':'msg', 'content': data2}
-        
-        elif data == 'login':
-            
-            brukernavn = raw_input('Skriv inn ditt brukernavn: ')
-            
-            data3 = {'request':'login', 'content': brukernavn}
-            
-        elif data == 'logout':
-            
-            data3 = {'request':'logout', 'content': None}
-            
-        elif data == 'help':
-            
-            data3 = {'request':'help', 'content': None}
-            
-        elif data == 'names':
-            
-            data3 = {'request':'names','content': None}
-        
-        else:
-            print("Not a legal request.")
 
         self.connection.connect((self.host, self.server_port))
+        
+        while True:
 
-        self.send_payload(data3)
+            data = raw_input('Skriv kommando: ')
+
+            if data == 'msg':
+
+                data2 = raw_input('Skriv inn melding: ')
+
+                data3 = {'request':'msg', 'content': data2}
+            
+            elif data == 'login':
+                
+                brukernavn = raw_input('Skriv inn ditt brukernavn: ')
+                
+                data3 = {'request':'login', 'content': brukernavn}
+                
+            elif data == 'logout':
+                
+                data3 = {'request':'logout', 'content': None}
+                
+            elif data == 'help':
+                
+                data3 = {'request':'help', 'content': None}
+                
+            elif data == 'names':
+                
+                data3 = {'request':'names','content': None}
+            
+            else:
+                print("Not a legal request.")
+
+
+            
+
+            self.send_payload(data3)
 
     def disconnect(self):
         # TODO: Handle disconnection
         self.connection.close()
-        pass
+        
 
     def receive_message(self, message):
-        result = json.loads(self.connection.recv(1024))
-        print result
-        pass
+        print message
+     
 
     def send_payload(self, data):
         self.connection.send(json.dumps(data))
-        pass
 
 
 if __name__ == '__main__':
