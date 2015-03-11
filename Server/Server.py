@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import SocketServer
-
+import json
 
 class ClientHandler(SocketServer.BaseRequestHandler):
     """
@@ -19,9 +19,19 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         self.connection = self.request
 
         # Loop that listens for messages from the client
-        while True:
-            received_string = self.connection.recv(4096)
+
+        a = True
+        while a:
+            received_string = self.connection.recv(1024)
+            data = json.loads(received_string)
+
+            if data: 
+                print data
+                a = false
+
+            self.request.sendall(json.dumps({'return' : 'ok'}))
             
+
             # TODO: Add handling of received payload from client
 
 

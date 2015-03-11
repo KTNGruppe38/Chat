@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import socket
+import json
 
 class Client:
     """
@@ -16,13 +17,24 @@ class Client:
 
         # Set up the socket connection to the server
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        
+        self.host = host
+        self.server_port = server_port
+
         self.run()
+
+
 
         # TODO: Finish init process with necessary code
 
     def run(self):
         # Initiate the connection to the server
+        data = {'message':'hello world!', 'test':123.4}
         self.connection.connect((self.host, self.server_port))
+        self.connection.send(json.dumps(data))
+        result = json.loads(self.connection.recv(1024))
+        print result
+        self.connection.close()
 
     def disconnect(self):
         # TODO: Handle disconnection
