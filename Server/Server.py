@@ -20,16 +20,17 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
         # Loop that listens for messages from the client
 
-        a = True
-        while a:
+        while True:
             received_string = self.connection.recv(1024)
-            data = json.loads(received_string)
+            
+            if received_string:
+                print received_string
 
-            if data: 
-                print data
-                a = false
+            #data = json.loads(received_string)
 
-            self.request.sendall(json.dumps({'return' : 'ok'}))
+            #print data
+
+            #self.request.sendall(json.dumps({'return' : 'ok'}))
             
 
             # TODO: Add handling of received payload from client

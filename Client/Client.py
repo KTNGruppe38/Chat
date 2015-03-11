@@ -29,23 +29,34 @@ class Client:
 
     def run(self):
         # Initiate the connection to the server
-        data = {'message':'hello world!', 'test':123.4}
+        
+        data = raw_input('Skriv kommando: ')
+
+
+
+        if data == 'msg':
+
+            data2 = raw_input('Skriv inn melding: ')
+
+            data3 = {'request:':'msg', 'content': data2}
+
         self.connection.connect((self.host, self.server_port))
-        self.connection.send(json.dumps(data))
-        result = json.loads(self.connection.recv(1024))
-        print result
-        self.connection.close()
+
+        self.send_payload(data3)
+    
 
     def disconnect(self):
         # TODO: Handle disconnection
+        self.connection.close()
         pass
 
     def receive_message(self, message):
-        # TODO: Handle incoming message
+        result = json.loads(self.connection.recv(1024))
+        print result
         pass
 
     def send_payload(self, data):
-        # TODO: Handle sending of a payload
+        self.connection.send(json.dumps(data))
         pass
 
 
