@@ -32,18 +32,36 @@ class Client:
         
         data = raw_input('Skriv kommando: ')
 
-
-
         if data == 'msg':
 
             data2 = raw_input('Skriv inn melding: ')
 
-            data3 = {'request:':'msg', 'content': data2}
+            data3 = {'request':'msg', 'content': data2}
+        
+        elif data == 'login':
+            
+            brukernavn = raw_input('Skriv inn ditt brukernavn: ')
+            
+            data3 = {'request':'login', 'content': brukernavn}
+            
+        elif data == 'logout':
+            
+            data3 = {'request':'logout', 'content': None}
+            
+        elif data == 'help':
+            
+            data3 = {'request':'help', 'content': None}
+            
+        elif data == 'names':
+            
+            data3 = {'request':'names','content': None}
+        
+        else:
+            print("Not a legal request.")
 
         self.connection.connect((self.host, self.server_port))
 
         self.send_payload(data3)
-    
 
     def disconnect(self):
         # TODO: Handle disconnection
