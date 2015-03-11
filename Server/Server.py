@@ -24,7 +24,8 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             received_string = self.connection.recv(1024)
             
             if received_string:
-                print received_string
+                data = json.loads(received_string)
+                print data
 
             #data = json.loads(received_string)
 
