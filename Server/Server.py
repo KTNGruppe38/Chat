@@ -3,6 +3,9 @@ import SocketServer
 import json
 
 class ClientHandler(SocketServer.BaseRequestHandler):
+    
+    usernames = []
+    
     """
     This is the ClientHandler class. Everytime a new client connects to the
     server, a new ClientHandler object will be created. This class represents
@@ -11,12 +14,14 @@ class ClientHandler(SocketServer.BaseRequestHandler):
     """
 
     def handle(self):
+        
         """
         This method handles the connection between a client and the server.
         """
         self.ip = self.client_address[0]
         self.port = self.client_address[1]
         self.connection = self.request
+        
 
         # Loop that listens for messages from the client
         print "Wating input from user..."
@@ -24,6 +29,15 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             print"Before"
             received_string = self.connection.recv(1024)
             print"After"
+            data2 = json.loads(received_string)
+            request = data2['request']
+            
+            if (request == "login"):
+                username = data2['content']
+                self.usernames.append(username)
+                
+                
+            
             if received_string:
                 data = json.loads(received_string)
                 print data

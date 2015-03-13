@@ -48,7 +48,7 @@ class Client:
             
             elif data == 'login':
                 
-                brukernavn = raw_input('Skriv inn ditt brukernavn: ')
+                username = raw_input('Write in your username: ')
                 
                 data3 = {'request':'login', 'content': brukernavn}
                 
@@ -79,8 +79,10 @@ class Client:
         
 
     def receive_message(self, message):
-        decode_message=json.loads(message)
-        print decode_message
+        decode_message= json.loads(message)
+        
+        message = decode_message.get('content') 
+        print message
      
 
     def send_payload(self, data):
