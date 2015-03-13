@@ -18,6 +18,7 @@ class Client:
 
         # Set up the socket connection to the server
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.connection.connect((self.host, self.server_port))
         self.message_receiver=MessageReceiver(self,self.connection)
         self.message_receiver.start()
         
@@ -33,7 +34,7 @@ class Client:
     def run(self):
         # Initiate the connection to the server
 
-        self.connection.connect((self.host, self.server_port))
+        
         
         while True:
 
@@ -78,7 +79,7 @@ class Client:
         
 
     def receive_message(self, message):
-        decode_message=json.load(message)
+        decode_message=json.loads(message)
         print decode_message
      
 
