@@ -19,15 +19,18 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         self.connection = self.request
 
         # Loop that listens for messages from the client
-
+        print "Wating input from user..."
         while True:
+            print"Before"
             received_string = self.connection.recv(1024)
-            
+            print"After"
             if received_string:
                 data = json.loads(received_string)
                 print data
-                self.connection.send(json.dumps(data))
-
+                self.connection.send(json.dumps(data)) #  send all? 
+            else:
+                print "1"
+                
             #data = json.loads(received_string)
 
             #print data

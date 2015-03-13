@@ -18,7 +18,8 @@ class Client:
 
         # Set up the socket connection to the server
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.MessageReceiver.MessageReceiver(self,self.connection)
+        self.message_receiver=MessageReceiver(self,self.connection)
+        self.message_receiver.start()
         
         self.host = host
         self.server_port = server_port
@@ -64,6 +65,7 @@ class Client:
             
             else:
                 print("Not a legal request.")
+                data3=0
 
 
             
@@ -76,7 +78,8 @@ class Client:
         
 
     def receive_message(self, message):
-        print message
+        decode_message=json.load(message)
+        print decode_message
      
 
     def send_payload(self, data):
