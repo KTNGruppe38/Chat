@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import SocketServer
-import json
+import json, time
 
 class ClientHandler(SocketServer.BaseRequestHandler):
     
-    usernames = []
+    messages = []
+    clients = {}
+    deads = []
     
     """
     This is the ClientHandler class. Everytime a new client connects to the
@@ -21,7 +23,6 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         self.ip = self.client_address[0]
         self.port = self.client_address[1]
         self.connection = self.request
-        
 
         # Loop that listens for messages from the client
         print "Wating input from user..."
@@ -46,27 +47,72 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                 break
 
     def login(self,payload):
+        username = re.sub('[^0-9a-zA-Z]+', '*', payload.get('content'))
+        while username in self.server.clients.values():
+            username += '_'
+        self.server.clients[self.connection] =  username
+        self.send_payload('server', 'info', 'Successfully logged in as %s' % username)
+        msg_string = '\n'
+        if self.server.messages:
+            for payload in self.server.messages:
+                msg_string += "%s: <%s> %s %s\n" % (payload.get('timestamp'), payload.get('sender'), payload.get('response'), payload.get('content'))
+            self.send_payload('server', 'info', msg_string)
 
-                username = data2['content']
-                self.usernames.append(username)
+    def logged_in(self):
+        if not self.connection in self.server.clients:
+            self.send_payload('server', 'error', 'Not logged in. Type help for info.')
+            return False
+        else:
+            return True
 
     def logout(self,payload):
 
+        if self.logged_in():
+            self.send_payload('server', 'info', 'Successfully logged out')
+            del self.server.clients[self.connection]
+
     def msg(self,payload):
+
+        if self.logged_in():
+            username = self.server.clients[self.connection]
+            msg = payload.get('content')
+            self.send_payload(self.color+username+'\033[0m', 'message', msg)
 
     def names(self,payload):
 
+        if self.logged_in():
+            names = self.server.clients.values()
+            self.send_payload('server', 'info', '\033[0m, '.join(names)+'\033[0m')
+
     def help(self,payload):
+
+        help_string = '\nlogin <username> - log in with the given username\nlogout - log out\nmsg <message> - send message\nnames - list users in chat\nhelp - view help text'
+        self.send_payload('server', 'info', help_string)
 
     def error(self,payload):
 
+        self.send_payload('server', 'error', 'You did somethin wrong: %s' % payload.get('request'))
+
     def send_payload(self,payload):
-        payload = 
+        payload = {'timestamp'  : time.strftime('%Y-%m-%d %H:%M:%S'),
+                    'sender'    : sender,
+                    'response'  : response,
+                    'content'   : content
+        }
+        if response == 'message':
+            self.server.messages.append(payload)
+            self.server.broadcast(json.dumps(payload))
+        else:
+            self.connection.sendall(json.dumps(payload))
 
-
-            
-
-            # TODO: Add handling of received payload from client
+    def broadcast(self, message):
+        for client in self.clients:
+            try:
+                client.sendall(message)
+            except:
+                self.deads.append(client)
+        for dead_conn in self.deads:
+             del self.clients[dead_conn]
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
