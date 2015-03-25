@@ -27,9 +27,10 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         # Loop that listens for messages from the client
         print "Wating input from user..."
         while True:
-            received_string = self.connection.recv(1024)
+            received_string = self.connection.recv(1024).strip()
             if received_string:
                 payload = json.loads(received_string)
+                print payload
                 request = payload.get('request')
                 if request == 'login':
                     self.login(payload)
