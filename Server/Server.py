@@ -77,7 +77,7 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         if self.logged_in():
             username = self.clients[self.connection]
             msg = payload.get('content')
-            self.send_payload(self.color+username+'\033[0m', 'message', msg)
+            self.send_payload(username+'\033[0m', 'message', msg)
 
     def names(self,payload):
 
