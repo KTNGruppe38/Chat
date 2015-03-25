@@ -26,30 +26,44 @@ class ClientHandler(SocketServer.BaseRequestHandler):
         # Loop that listens for messages from the client
         print "Wating input from user..."
         while True:
-            print"Before"
             received_string = self.connection.recv(1024)
-            print"After"
-            data2 = json.loads(received_string)
-            request = data2['request']
-            
-            if (request == "login"):
+            if received_string:
+                payload = json.loads(received_string)
+                request = payload.get('request')
+                if request == 'login':
+                    self.login(payload)
+                elif request == 'logout':
+                    self.logout(payload)
+                elif request == 'msg':
+                    self.msg(payload)
+                elif request == 'names':
+                    self.names(payload)
+                elif request == 'help':
+                    self.help(payload)
+                else:
+                    self.error(payload)
+            else:
+                break
+
+    def login(self,payload):
+
                 username = data2['content']
                 self.usernames.append(username)
-                
-                
-            
-            if received_string:
-                data = json.loads(received_string)
-                print data
-                self.connection.send(json.dumps(data)) #  send all? 
-            else:
-                print "1"
-                
-            #data = json.loads(received_string)
 
-            #print data
+    def logout(self,payload):
 
-            #self.request.sendall(json.dumps({'return' : 'ok'}))
+    def msg(self,payload):
+
+    def names(self,payload):
+
+    def help(self,payload):
+
+    def error(self,payload):
+
+    def send_payload(self,payload):
+        payload = 
+
+
             
 
             # TODO: Add handling of received payload from client

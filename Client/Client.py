@@ -27,14 +27,7 @@ class Client:
 
         self.run()
 
-
-
-        # TODO: Finish init process with necessary code
-
     def run(self):
-        # Initiate the connection to the server
-
-        
         
         while True:
 
@@ -50,7 +43,7 @@ class Client:
                 
                 username = raw_input('Write in your username: ')
                 
-                data3 = {'request':'login', 'content': brukernavn}
+                data3 = {'request':'login', 'content': username}
                 
             elif data == 'logout':
                 
@@ -74,7 +67,7 @@ class Client:
             self.send_payload(data3)
 
     def disconnect(self):
-        # TODO: Handle disconnection
+
         self.connection.close()
         
 
