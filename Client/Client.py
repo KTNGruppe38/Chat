@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import socket
-import json
+import sys, json, time
 from MessageReceiver import MessageReceiver
 
 class Client:
@@ -31,12 +31,14 @@ class Client:
             message = raw_input('Enter command \n')
             self.send_payload(message)
             if message == 'logout':
+                time.sleep(1)
                 break
         self.disconnect()
 
     def disconnect(self):
 
         self.connection.close()
+        raise SystemExit
         
 
     def receive_message(self, message):

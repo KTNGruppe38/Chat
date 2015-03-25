@@ -30,7 +30,6 @@ class ClientHandler(SocketServer.BaseRequestHandler):
             received_string = self.connection.recv(1024).strip()
             if received_string:
                 payload = json.loads(received_string)
-                print payload
                 request = payload.get('request')
                 if request == 'login':
                     self.login(payload)
