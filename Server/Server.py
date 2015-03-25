@@ -48,19 +48,19 @@ class ClientHandler(SocketServer.BaseRequestHandler):
                 break
 
     def login(self,payload):
-        username = re.sub('[^0-9a-zA-Z]+', '*', payload.get('content'))
-        while username in self.server.clients.values():
+        username = payload.get('content')
+        while username in self.clients.values():
             username += '_'
-        self.server.clients[self.connection] =  username
+        self.clients[self.connection] =  username
         self.send_payload('server', 'info', 'Successfully logged in as %s' % username)
         msg_string = '\n'
-        if self.server.messages:
-            for payload in self.server.messages:
+        if self.messages:
+            for payload in self.messages:
                 msg_string += "%s: <%s> %s %s\n" % (payload.get('timestamp'), payload.get('sender'), payload.get('response'), payload.get('content'))
             self.send_payload('server', 'info', msg_string)
 
     def logged_in(self):
-        if not self.connection in self.server.clients:
+        if not self.connection in self.clients:
             self.send_payload('server', 'error', 'Not logged in. Type help for info.')
             return False
         else:
@@ -70,19 +70,19 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
         if self.logged_in():
             self.send_payload('server', 'info', 'Successfully logged out')
-            del self.server.clients[self.connection]
+            del self.clients[self.connection]
 
     def msg(self,payload):
 
         if self.logged_in():
-            username = self.server.clients[self.connection]
+            username = self.clients[self.connection]
             msg = payload.get('content')
             self.send_payload(self.color+username+'\033[0m', 'message', msg)
 
     def names(self,payload):
 
         if self.logged_in():
-            names = self.server.clients.values()
+            names = self.clients.values()
             self.send_payload('server', 'info', '\033[0m, '.join(names)+'\033[0m')
 
     def help(self,payload):
@@ -94,15 +94,15 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
         self.send_payload('server', 'error', 'You did somethin wrong: %s' % payload.get('request'))
 
-    def send_payload(self,payload):
+    def send_payload(self,sender, response, content):
         payload = {'timestamp'  : time.strftime('%Y-%m-%d %H:%M:%S'),
                     'sender'    : sender,
                     'response'  : response,
                     'content'   : content
         }
         if response == 'message':
-            self.server.messages.append(payload)
-            self.server.broadcast(json.dumps(payload))
+            self.messages.append(payload)
+            self.broadcast(json.dumps(payload))
         else:
             self.connection.sendall(json.dumps(payload))
 

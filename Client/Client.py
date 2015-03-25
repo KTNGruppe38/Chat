@@ -48,7 +48,7 @@ class Client:
     def send_payload(self, data):
         s = data.split(' ', 1)
         payload = {'request': s[0], 'content': s[1] if len(s) > 1 else None}
-        self.connection.send(json.dumps(data))
+        self.connection.send(json.dumps(payload))
 
 
 if __name__ == '__main__':
