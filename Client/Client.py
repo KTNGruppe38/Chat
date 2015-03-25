@@ -28,43 +28,17 @@ class Client:
         self.run()
 
     def run(self):
+
+        self.connection.connect((self.host, self.server_port))
+        message_receiver=MessageReceiver(self,self.connection)
+        message_receiver.start()
         
         while True:
-
-            data = raw_input('Skriv kommando: ')
-
-            if data == 'msg':
-
-                data2 = raw_input('Skriv inn melding: ')
-
-                data3 = {'request':'msg', 'content': data2}
-            
-            elif data == 'login':
-                
-                username = raw_input('Write in your username: ')
-                
-                data3 = {'request':'login', 'content': username}
-                
-            elif data == 'logout':
-                
-                data3 = {'request':'logout', 'content': None}
-                
-            elif data == 'help':
-                
-                data3 = {'request':'help', 'content': None}
-                
-            elif data == 'names':
-                
-                data3 = {'request':'names','content': None}
-            
-            else:
-                print("Not a legal request.")
-                data3=0
-
-
-            
-
-            self.send_payload(data3)
+            message = raw_input('')
+            this.send_payload(message)
+            if message == 'logout':
+                break
+        this.disconnect()
 
     def disconnect(self):
 
@@ -72,13 +46,14 @@ class Client:
         
 
     def receive_message(self, message):
-        decode_message= json.loads(message)
-        
-        message = decode_message.get('content') 
-        print message
+        payload = json.loads(message)
+        print "%s: %s <%s> %s" % (payload.get('timestamp'), payload.get('response'), payload.get('sender'), payload.get('content'))
+
      
 
     def send_payload(self, data):
+        s = data.split(' ', 1)
+        payload = {'request': s[0], 'content': s[1] if len(s) > 1 else None}
         self.connection.send(json.dumps(data))
 
 

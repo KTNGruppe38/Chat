@@ -17,6 +17,8 @@ class MessageReceiver(Thread):
         self.daemon = True
         self.client = client
         self.connection = connection
+        super(MessageReceiver, self).__init__()
+
 
 
     def run(self):
